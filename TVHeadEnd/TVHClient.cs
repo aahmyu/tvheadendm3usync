@@ -58,7 +58,7 @@ namespace TVHeadEndM3USync.TVHeadEnd
                 param.Add("start=" + p.Start.Value);
             if (p.Limit.HasValue)
                 param.Add("limit=" + p.Limit.Value);
-            var byteArray = Encoding.UTF8.GetBytes(string.Join("&",param));
+            var byteArray = Encoding.UTF8.GetBytes(string.Join("&", param));
 
             SetRequestStream(wr, byteArray);
 
@@ -103,10 +103,11 @@ namespace TVHeadEndM3USync.TVHeadEnd
             obj["epg"] = false;
             obj["iptv_url"] = e.Url;
             obj["iptv_muxname"] = e.Name;
+            obj["iptv_sname"] = e.Name;
             obj["scan_state"] = 0;
             var byteArray = Encoding.UTF8.GetBytes(param + System.Web.HttpUtility.UrlEncode(obj.ToString()));
 
-            SetRequestStream(wr, byteArray);            
+            SetRequestStream(wr, byteArray);
 
             var res = GetJSON(wr);
             return res.Value<string>("uuid");
@@ -120,7 +121,8 @@ namespace TVHeadEndM3USync.TVHeadEnd
             var obj = new Newtonsoft.Json.Linq.JObject();
             obj["uuid"] = mux.UUID;
             obj["iptv_muxname"] = mux.Name;
-            obj["iptv_url"] = mux.Url;            
+            obj["iptv_url"] = mux.Url;
+            obj["iptv_sname"] = mux.Name;
             var byteArray = Encoding.UTF8.GetBytes(param + System.Web.HttpUtility.UrlEncode(obj.ToString()));
 
             SetRequestStream(wr, byteArray);
@@ -134,7 +136,7 @@ namespace TVHeadEndM3USync.TVHeadEnd
             wr.Method = "POST";
             var param = "uuid=";
             var obj = new Newtonsoft.Json.Linq.JArray();
-            obj.Add(mux.UUID);            
+            obj.Add(mux.UUID);
             var byteArray = Encoding.UTF8.GetBytes(param + System.Web.HttpUtility.UrlEncode(obj.ToString()));
 
             SetRequestStream(wr, byteArray);
@@ -176,7 +178,7 @@ namespace TVHeadEndM3USync.TVHeadEnd
             var obj = GetJSON(wr);
             foreach (var ent in obj["entries"])
             {
-                var m = new Mux();                
+                var m = new Mux();
                 m.Enabled = ent.Value<bool>("enabled");
                 m.UUID = ent.Value<string>("uuid");
                 m.NetworkName = ent.Value<string>("networkname");
@@ -186,6 +188,6 @@ namespace TVHeadEndM3USync.TVHeadEnd
                 lst.Add(m);
             }
             return lst;
-        }        
+        }
     }
 }
